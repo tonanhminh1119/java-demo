@@ -1,14 +1,9 @@
 package com.myapp;
 import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
-import com.myapp.Application.StudentRepository;
-import com.myapp.Models.*;
-import com.myapp.Models.Entities.SchoolObjects.Student;
-import com.myapp.Models.Exceptions.DuplicateStudentException;
-import com.myapp.Models.Exceptions.InvalidScoreException;
+import com.myapp.Applications.StudentRepository;
+import com.myapp.Models.Entities.SchoolObjects.*;
+import com.myapp.Models.Exceptions.*;
 import com.myapp.Services.*;
 
 import java.util.Random;
@@ -16,24 +11,48 @@ import java.util.Random;
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello");
-        Random rand = new Random();
+        Random rand=new Random();
 
-        InMemoryStudentRepository repo = new InMemoryStudentRepository();
-        AddStudentToMap(repo, "A",rand.nextInt(50,101));
-        AddStudentToMap(repo, "Q",rand.nextInt(50,101));
-        AddStudentToMap(repo, "W",rand.nextInt(50,101));
-        AddStudentToMap(repo, "A",rand.nextInt(50,101));
-        AddStudentToMap(repo, "R",rand.nextInt(50,101));
-        AddStudentToMap(repo, "E",rand.nextInt(50,101));
-        StudentService students = new StudentService(repo);
-        students.getPassedStudents();
-        students.getAverageScore();
-        students.getTop(3);
-        students.getByName("A");
+        StudentRepository repo = new InMemoryStudentRepository();
+        AddStudentToMap(repo, "A", rand.nextInt(50, 101));
+        AddStudentToMap(repo, "Q", rand.nextInt(50, 101));
+        AddStudentToMap(repo, "W", rand.nextInt(50, 101));
+        AddStudentToMap(repo, "A", rand.nextInt(50, 101));
+        AddStudentToMap(repo, "R", rand.nextInt(50, 101));
+        AddStudentToMap(repo, "E", rand.nextInt(50, 101));
+        StudentService students=new StudentService(repo);
+
+        var passedStudents=students.getPassedStudents();
+        System.out.println("Total passed students is: "+ passedStudents.size());
+        passedStudents.forEach(x -> System.out.println("Honoring student \""+ x.getName() + "\""+ "scoring "+ x.getScore()));
+
+        var avgScore=students.getAverageScore();
+        System.out.println("Class avarage score: "+ avgScore);
+
+        int topIndex=3;
+        var topList=students.getTop(topIndex);
+        System.out.println("Top "+ topIndex + " students are:");
+        topList.forEach(x -> System.out.println("Student \""+ x.getName() + "\""+ " scoring "+ x.getScore()));
+
+        try {
+            var found=students.getByName("z");
+            System.out.println("Found student "+ found.getName() + " scoring "+ found.getScore());
+        }
+        catch (StudentNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            students.removeStudentByName("A");
+            students.removeStudentByName("A");
+        }
+        catch (StudentNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
 
         //#region exception
         // try{
-        
+
         //     int resullt = 10/0;
         // }catch(ArithmeticException  ex){
         //     System.out.println("Exception: "+ex.getMessage());
@@ -77,27 +96,36 @@ public class Main {
         // System.out.println("Divide: " + Calculator.divide(5, 3));
         //#endregion
     }
-    public static void Honoring(List<String> list){
-        list.forEach(x -> System.out.println("Honoring student \"" + x + "\""));
+
+    public static void Honoring(List < String > list) {
+        list.forEach(x -> System.out.println("Honoring student \""+ x + "\""));
     }
-    public static void ListStudent(List<Student> list){
-        list.forEach(x -> System.out.println("Student " + x.getName() + " scoring " + x.getScore() ));
+
+    public static void ListStudent(List <Student> list) {
+        list.forEach(x -> System.out.println("Student "+ x.getName() + " scoring "+ x.getScore()));
     }
-    
-    public static void AddStudentToMap(InMemoryStudentRepository repo, String name, int score){
-        try{
+
+    public static void AddStudentToMap(StudentRepository repo, String name, int score) {
+        try {
             repo.add(new Student(name, score));
-        }catch(InvalidScoreException ex){
-            System.out.println("Exception: "+ex.getMessage());
-        }catch(DuplicateStudentException ex){
-            System.out.println("Exception: "+ex.getMessage());
+        }
+
+        catch (InvalidScoreException ex) {
+            System.out.println("Exception: "+ ex.getMessage());
+        }
+
+        catch (DuplicateStudentException ex) {
+            System.out.println("Exception: "+ ex.getMessage());
         }
     }
-    public static void AddStudent(List<Student> list, String name, int score){
-        try{
+
+    public static void AddStudent(List<Student> list, String name, int score) {
+        try {
             list.add(new Student(name, score));
-        }catch(InvalidScoreException ex){
-            System.out.println("Exception: "+ex.getMessage());
+        }
+
+        catch (InvalidScoreException ex) {
+            System.out.println("Exception: "+ ex.getMessage());
         }
     }
 }

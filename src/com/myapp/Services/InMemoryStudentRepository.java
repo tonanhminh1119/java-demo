@@ -1,19 +1,16 @@
 package com.myapp.Services;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
-
-import com.myapp.Application.*;
+import com.myapp.Applications.*;
 import com.myapp.Models.Entities.SchoolObjects.Student;
 import com.myapp.Models.Exceptions.DuplicateStudentException;
 import com.myapp.Models.Exceptions.StudentNotFoundException;
 
 public class InMemoryStudentRepository implements StudentRepository{
-    public Map<String, Student> StudentList;
+    private Map<String, Student> StudentList;
     public InMemoryStudentRepository() {
         StudentList = new HashMap<>();
     }
@@ -46,7 +43,7 @@ public class InMemoryStudentRepository implements StudentRepository{
     @Override
     public void remove(String name) {
         if(!StudentList.containsKey(name)){
-            throw new StudentNotFoundException("Student \\\"" + name + "\\\" not found");
+            throw new StudentNotFoundException("Student \"" + name + "\" not found");
         }
         StudentList.remove(name);
     }
